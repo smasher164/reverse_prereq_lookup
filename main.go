@@ -37,10 +37,6 @@ func populate(code, v string) {
 // course code [course number] []prereq
 var m map[string]map[string]bool
 
-// var home = template.New(`
-// 	<h1>Reverse Prerequisite</h1>
-// `)
-
 func main() {
 	m = make(map[string]map[string]bool)
 	file, err := os.Open("CS1188Data.csv")
@@ -57,13 +53,16 @@ func main() {
 		last := record[len(record)-1]
 		populate(record[1]+" "+record[2], last)
 	}
-	// rw.Header().Set("Access-Control-Allow-Origin", "*")
-	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
-		rw.Write("This is whe")
-	})
+	http.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("/Users/akhil/testgo/server_isabel"))))
 	http.HandleFunc("/prereq", func(rw http.ResponseWriter, r *http.Request) {
+		rw.Header().Set("Access-Control-Allow-Origin", "*")
 		course := r.FormValue("course")
-		rw.Write([]byte(m[course]))
+		mm := m[course]
+		var s strings.Builder
+		for k, _ := range mm {
+			s.WriteString(k + "\n")
+		}
+		rw.Write([]byte(s.String()))
 	})
-	http.ListenAndServe(":8080", http.HandlerFunc())
+	http.ListenAndServe(":8080", nil)
 }

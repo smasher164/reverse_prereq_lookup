@@ -17,14 +17,15 @@
         <script type="text/javascript">
             
             function lookup() {
-                var textAreaID = "class";
-                var thisClass = document.getElementById(textAreaID).value;
-                thisClass.trim();
+                var thisClass = document.querySelector("#main > div > textarea").value;
+                thisClass = thisClass.trim();
                 var req = new XMLHttpRequest();
-                req.open("GET", "localhost:8080/prereq?="+thisClass);
-                req.onload = function(e) {
-                    console.log(e.responseText)
-                }
+                req.addEventListener("load", function() {
+                	var field = document.querySelector("#prerequisites");
+                	field.style += ";white-space: pre-line;"
+                	field.innerHTML = this.responseText;
+                })
+                req.open("GET", "http://localhost:8080/prereq?course="+thisClass);
                 req.send();
             };
             
@@ -49,7 +50,8 @@
 					<section id="main" class="wrapper">
 						<div class="inner">
 							<h1 class="major">Reverse Prerequisite Lookup</h1>
-							<p>Insert Instructions Here</p>
+							<p>Prerequisites will appear here:</p>
+							<p id="prerequisites"></p>
                             <br/>
                             <textarea rows="2" cols="2"></textarea>
                             <br/>
